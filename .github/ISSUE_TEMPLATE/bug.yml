@@ -1,0 +1,42 @@
+name: Bug report
+description: Report a reproducible problem without posting private Msty data.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not paste prompts, documents, keys, provider settings, model names, usernames,
+        file paths, Msty databases, or screenshots containing private information.
+  - type: dropdown
+    id: doctor
+    attributes:
+      label: Doctor result
+      options:
+        - GREEN
+        - YELLOW
+        - RED
+        - Could not run
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Msty Local Ops version
+      placeholder: "1.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction using synthetic data only
+      description: Describe the smallest fictional-data example that reproduces the issue.
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I reviewed this report and removed private content and credentials.
+          required: true

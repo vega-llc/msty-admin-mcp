@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.21"
+      - name: Validate final tag
+        run: python scripts/validate_release_tag.py "${GITHUB_REF_NAME}"
+      - run: uv lock --check
+      - run: uv sync --frozen --extra dev --python 3.12
+      - run: uv run --frozen ruff check msty_ops scripts tests
+      - run: uv run --frozen black --check msty_ops scripts tests
+      - run: uv run --frozen mypy msty_ops scripts
+      - run: uv run --frozen pytest -q
+      - run: uv run --frozen pip-audit --strict --disable-pip -r requirements-audit.txt
+      - name: Build distributions and source archive
+        run: |
+          uv run --frozen python -m build --no-isolation
+          VERSION="${GITHUB_REF_NAME#v}"
+          git archive --format=zip --prefix="msty-local-ops-${VERSION}/" \
+            --output="dist/msty-local-ops-${VERSION}.zip" HEAD
+          python scripts/build_release_metadata.py --version "${VERSION}"
+      - name: Attest release assets
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+        with:
+          subject-path: "dist/*"
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/* \
+            --verify-tag \
+            --title "Msty Local Ops ${GITHUB_REF_NAME}" \
+            --generate-notes

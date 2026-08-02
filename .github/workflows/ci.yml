@@ -42,6 +42,7 @@ jobs:
       - run: uv sync --frozen --extra dev --python "${{ matrix.python-version }}"
       - run: uv run --frozen ruff check msty_ops scripts tests
       - run: uv run --frozen black --check msty_ops scripts tests
+      - run: uv run --frozen mypy msty_ops scripts
       - run: uv run --frozen pytest -q
       - run: uv pip check
 
@@ -62,7 +63,7 @@ jobs:
       - run: |
           "${RUNNER_TEMP}/wheel-check/bin/python" -m pip install dist/*.whl
       - run: |
-          "${RUNNER_TEMP}/wheel-check/bin/python" -c "import msty_ops; assert msty_ops.__version__ == '1.0.0'"
+          "${RUNNER_TEMP}/wheel-check/bin/python" -c "import msty_ops; assert msty_ops.__version__ == '1.1.0'"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: python-distributions

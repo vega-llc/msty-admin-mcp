@@ -7,7 +7,7 @@ server are supported. The local-inference server must be added explicitly.
 
 ## Reporting a vulnerability
 
-When the repository is published, use its private GitHub security-advisory form.
+Use the repository's private GitHub security-advisory form.
 Do not place credentials, private documents, prompts, or machine-specific evidence
 in a public issue.
 
@@ -21,3 +21,5 @@ in a public issue.
 - no cloud fallback
 - no simulated success responses
 - bounded inputs, inventory, metadata, and response sizes
+- support bundles limited to an explicit redacted schema and private file permissions
+- exact commit pins for every third-party GitHub Action

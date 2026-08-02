@@ -5,6 +5,8 @@ read-only diagnostics and, in a separate opt-in process, one bounded local-gener
 tool. It does not read chats, Knowledge Stacks, private databases, provider keys, or
 application configuration.
 
+**New here? Start with the illustrated [Mac start guide](docs/MAC-START-HERE.md).**
+
 This is an independent community project, not an official Msty product.
 
 ## What you get
@@ -32,12 +34,34 @@ provider.
    diagnostic JSON first.
 6. Test the tool in Msty's Tool Console before attaching it to a conversation.
 
+Msty starts the MCP when it needs it. There is no background service to launch by
+hand. After installation, start Msty Studio first.
+
 Msty's official Toolbox guide explains the same local STDIO/JSON flow:
 [Msty Studio Tools](https://docs.msty.ai/studio/toolbox/tools).
 
 The diagnostic MCP is the safe default. Add the local-inference JSON only when you
 want the calling model to send prompts to a local Msty model. The calling MCP client
 can observe those prompts and results; see [PRIVACY.md](PRIVACY.md).
+
+## Health, upgrade drift, and support
+
+The installer adds two local commands:
+
+```bash
+msty-local-ops-doctor
+msty-local-ops-support --output msty-local-ops-support.json
+```
+
+The doctor reports **GREEN**, **YELLOW**, or **RED** and never reads chats, keys, or
+Msty's private database. After a known-good setup, run
+`msty-local-ops-doctor --record-baseline`. Future checks warn if the tested Studio
+version, adapter version, or local service shape changes.
+
+The support command writes a mode-0600 JSON bundle containing versions, booleans,
+counts, and error categories only. It deliberately excludes usernames, paths, model
+identifiers, prompts, content, provider details, and credentials. Review the file
+before attaching it to a public issue.
 
 ## Try the fictional Knowledge Stack
 
