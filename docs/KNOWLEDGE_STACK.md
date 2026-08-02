@@ -29,5 +29,5 @@ instructions, and says unknown facts are not established.
 Msty's official documentation recommends starting with a small, focused stack and
 notes that local embeddings keep embedding work on the device:
 
-- https://docs.msty.app/features/knowledge-stack/basics
-- https://docs.msty.app/features/knowledge-stack/embeddings
+- https://docs.msty.ai/studio/knowledge-stacks/overview
+- https://docs.msty.ai/studio/managing-models/local-models

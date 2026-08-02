@@ -53,15 +53,16 @@ def test_package_version_and_operator_commands_are_current():
     pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     installed_check = (ROOT / "scripts/check_installed.py").read_text(encoding="utf-8")
 
-    assert 'version = "1.2.0"' in pyproject
+    assert 'version = "1.3.0"' in pyproject
     assert 'msty-local-ops-doctor = "msty_ops.doctor:main"' in pyproject
     assert 'msty-local-ops-support = "msty_ops.support:main"' in pyproject
-    assert 'serverInfo.version == "1.2.0"' in installed_check
+    assert 'serverInfo.version == "1.3.0"' in installed_check
+    assert 'msty-local-ops-verify = "msty_ops.verify:main"' in pyproject
 
 
 def test_release_tag_must_match_project_version():
     valid = subprocess.run(
-        [sys.executable, str(ROOT / "scripts/validate_release_tag.py"), "v1.2.0"],
+        [sys.executable, str(ROOT / "scripts/validate_release_tag.py"), "v1.3.0"],
         cwd=ROOT,
         check=False,
         capture_output=True,
@@ -98,7 +99,7 @@ def test_release_metadata_contains_sbom_provenance_and_checksums(tmp_path):
             "--requirements",
             str(requirements),
             "--version",
-            "1.2.0",
+            "1.3.0",
         ],
         check=True,
     )
@@ -109,7 +110,7 @@ def test_release_metadata_contains_sbom_provenance_and_checksums(tmp_path):
     assert sbom["bomFormat"] == "CycloneDX"
     assert sbom["specVersion"] == "1.6"
     assert {item["name"] for item in sbom["components"]} == {"mcp", "psutil"}
-    assert provenance["subject"]["version"] == "1.2.0"
+    assert provenance["subject"]["version"] == "1.3.0"
     assert "package.whl" in checksums
     assert "msty-local-ops.cdx.json" in checksums
     assert "provenance.json" in checksums

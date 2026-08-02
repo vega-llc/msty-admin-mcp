@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "msty-local-ops"
-version = "1.2.0"
+version = "1.3.0"
 description = "Fail-closed MCP diagnostics and bounded local inference for Msty Studio"
 readme = "README.md"
 license = "MIT"
@@ -44,6 +44,7 @@ msty-local-ops = "msty_ops.server:main"
 msty-local-inference = "msty_ops.local_server:main"
 msty-local-ops-doctor = "msty_ops.doctor:main"
 msty-local-ops-support = "msty_ops.support:main"
+msty-local-ops-verify = "msty_ops.verify:main"
 
 [project.urls]
 Homepage = "https://github.com/vega-llc/msty-local-ops"

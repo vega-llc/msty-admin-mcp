@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import sys
+from email.message import Message
 from io import BytesIO
 from urllib.error import HTTPError
 
@@ -359,7 +360,7 @@ def test_http_errors_do_not_read_or_return_response_body(monkeypatch):
         url="http://127.0.0.1:11973/v1/models",
         code=500,
         msg="failure",
-        hdrs=None,
+        hdrs=Message(),
         fp=BytesIO(b"private prompt echo"),
     )
     monkeypatch.setattr(
