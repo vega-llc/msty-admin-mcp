@@ -241,6 +241,38 @@ def test_local_generate_rejects_truncated_reasoning_as_an_answer(monkeypatch):
     assert "unfinished reasoning" not in json.dumps(result)
 
 
+def test_local_generate_rejects_budget_exhaustion_even_when_service_reports_stop(monkeypatch):
+    def fake_request(service, endpoint, **kwargs):
+        if endpoint == "/v1/models":
+            return {"success": True, "data": {"data": [{"id": "test-model"}]}}
+        return {
+            "success": True,
+            "latency_ms": 2.0,
+            "data": {
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {"content": "unfinished reasoning at the token ceiling"},
+                    }
+                ],
+                "usage": {"completion_tokens": 256},
+            },
+        }
+
+    monkeypatch.setattr(runtime, "request_json", fake_request)
+
+    result = runtime.local_generate_request(
+        model="test-model",
+        message="synthetic test",
+        service="mlx",
+        max_tokens=256,
+    )
+
+    assert result["success"] is False
+    assert result["error_kind"] == "output_truncated"
+    assert "unfinished reasoning" not in json.dumps(result)
+
+
 def test_local_generate_can_disable_thinking_without_arbitrary_parameters(monkeypatch):
     chat_payload = None
 

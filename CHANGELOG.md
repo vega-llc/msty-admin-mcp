@@ -4,6 +4,8 @@
 
 - Added a bounded `default`/`none` thinking control for local inference.
 - Kept arbitrary model and provider parameters outside the public MCP surface.
+- Rejects completions that consume the full output budget even when a local engine
+  incorrectly reports a normal stop.
 
 ## 1.1.1
 

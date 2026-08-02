@@ -539,7 +539,8 @@ def local_generate_request(
         }
 
     content, completion_tokens, finish_reason = _extract_content(response.get("data"))
-    if finish_reason in {"length", "max_tokens"}:
+    output_budget_exhausted = isinstance(completion_tokens, int) and completion_tokens >= max_tokens
+    if finish_reason in {"length", "max_tokens"} or output_budget_exhausted:
         return {
             "success": False,
             "simulated": False,
