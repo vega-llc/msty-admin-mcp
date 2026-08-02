@@ -16,6 +16,7 @@ SERVICE_PORTS = {
     "llamacpp": 11454,
 }
 SERVICE_ORDER = tuple(SERVICE_PORTS)
+THINKING_MODES = frozenset({"default", "none"})
 ALLOWED_REQUESTS = frozenset(
     {
         ("GET", "/v1/models"),
@@ -386,6 +387,7 @@ def _validate_generation_inputs(
     temperature: float,
     max_tokens: int,
     service: str | None,
+    thinking_mode: str,
 ) -> str | None:
     if not isinstance(model, str) or not model.strip() or len(model) > 1_000:
         return "model must be a non-empty string of at most 1,000 characters"
@@ -405,6 +407,8 @@ def _validate_generation_inputs(
         return f"max_tokens must be between 1 and {MAX_OUTPUT_TOKENS}"
     if service is not None and service not in SERVICE_PORTS:
         return "service must be local_ai, mlx, or llamacpp"
+    if thinking_mode not in THINKING_MODES:
+        return "thinking_mode must be default or none"
     return None
 
 
@@ -445,6 +449,7 @@ def local_generate_request(
     system_prompt: str | None = None,
     temperature: float = 0.2,
     max_tokens: int = 1_024,
+    thinking_mode: str = "default",
 ) -> dict[str, Any]:
     """Generate through one explicitly selected, advertised local model."""
     validation_error = _validate_generation_inputs(
@@ -454,6 +459,7 @@ def local_generate_request(
         temperature,
         max_tokens,
         service,
+        thinking_mode,
     )
     if validation_error:
         return {"success": False, "error_kind": "invalid_parameter", "error": validation_error}
@@ -512,6 +518,8 @@ def local_generate_request(
         "max_tokens": max_tokens,
         "stream": False,
     }
+    if thinking_mode == "none":
+        payload["chat_template_kwargs"] = {"enable_thinking": False}
     response = request_json(
         selected_service,
         "/v1/chat/completions",
@@ -558,6 +566,7 @@ def local_generate_request(
         "trust_class": "local_loopback_inference",
         "model": model,
         "service": selected_service,
+        "thinking_mode": thinking_mode,
         "content": content,
         "completion_tokens": completion_tokens,
         "finish_reason": finish_reason,
@@ -572,6 +581,7 @@ __all__ = [
     "LOOPBACK_HOST",
     "SERVICE_PORTS",
     "SERVICE_ORDER",
+    "THINKING_MODES",
     "request_json",
     "probe_services",
     "build_model_manifest",

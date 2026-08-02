@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "msty-local-ops"
-version = "1.1.1"
+version = "1.2.0"
 description = "Fail-closed MCP diagnostics and bounded local inference for Msty Studio"
 readme = "README.md"
 license = "MIT"

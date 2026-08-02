@@ -64,8 +64,9 @@ def local_generate(
     system_prompt: str | None = None,
     temperature: float = 0.2,
     max_tokens: int = 1_024,
+    thinking_mode: str = "default",
 ) -> str:
-    """Generate with one explicit Msty local model; never simulate or fall back to cloud."""
+    """Generate locally; thinking_mode is strictly default or none; never use cloud."""
     return _render(
         local_generate_request(
             model=model,
@@ -74,6 +75,7 @@ def local_generate(
             system_prompt=system_prompt,
             temperature=temperature,
             max_tokens=max_tokens,
+            thinking_mode=thinking_mode,
         )
     )
 
