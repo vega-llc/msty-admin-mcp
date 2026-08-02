@@ -53,6 +53,7 @@ The installer adds two local commands:
 ```bash
 msty-local-ops-doctor
 msty-local-ops-support --output msty-local-ops-support.json
+msty-local-ops-verify
 ```
 
 The doctor reports **GREEN**, **YELLOW**, or **RED** and never reads chats, keys, or
@@ -64,6 +65,17 @@ The support command writes a mode-0600 JSON bundle containing versions, booleans
 counts, and error categories only. It deliberately excludes usernames, paths, model
 identifiers, prompts, content, provider details, and credentials. Review the file
 before attaching it to a public issue.
+
+The verify command is diagnostic by default and submits no prompt. To run the fixed
+public/synthetic inference canary, explicitly name an advertised local model and its
+service:
+
+```bash
+msty-local-ops-verify --model "<exact-local-model-id>" --service mlx --json
+```
+
+The canary never accepts document content or a custom prompt and never falls back to
+an online provider.
 
 ## Try the fictional Knowledge Stack
 
@@ -78,8 +90,8 @@ incident clarification, and an adversarial note.
 5. Run the questions in [docs/KNOWLEDGE_STACK.md](docs/KNOWLEDGE_STACK.md).
 
 Official references:
-[Knowledge Stack basics](https://docs.msty.app/features/knowledge-stack/basics) and
-[local embeddings](https://docs.msty.app/features/knowledge-stack/embeddings).
+[Knowledge Stack basics](https://docs.msty.ai/studio/knowledge-stacks/overview) and
+[local models](https://docs.msty.ai/studio/managing-models/local-models).
 
 ## Network and data boundary
 

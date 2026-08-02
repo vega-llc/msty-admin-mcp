@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0
+
+- Added `msty-local-ops-verify`, a diagnostic-first command with an optional fixed
+  public/synthetic local inference canary.
+- Kept custom prompts, document inputs, provider credentials, persistence, and cloud
+  fallback outside the verifier.
+- Updated Msty documentation links to the current official site.
+
 ## 1.2.0
 
 - Added a bounded `default`/`none` thinking control for local inference.
