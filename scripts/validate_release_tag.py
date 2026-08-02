@@ -7,7 +7,7 @@ import argparse
 import re
 from pathlib import Path
 
-import tomllib
+import tomli
 
 FINAL_TAG = re.compile(r"^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 
@@ -17,7 +17,7 @@ def validate(tag: str, pyproject: Path) -> str:
     if not match:
         raise ValueError("release tag must be final and exactly vMAJOR.MINOR.PATCH")
     with pyproject.open("rb") as stream:
-        version = tomllib.load(stream)["project"]["version"]
+        version = tomli.load(stream)["project"]["version"]
     if tag != f"v{version}":
         raise ValueError(f"tag {tag!r} does not match project version {version!r}")
     return version
