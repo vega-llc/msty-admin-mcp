@@ -24,11 +24,13 @@ provider.
 ## Install
 
 1. Install [Msty Studio for macOS](https://msty.ai/products/studio/).
-2. Download this repository and double-click `Install Msty Local Ops.command`.
-3. The installer creates two ready-to-paste Toolbox JSON files and opens their folder.
-4. In Msty Studio, open **Toolbox → Add New Tool → STDIO / JSON** and paste the
+2. Install Python 3.10, 3.11, or 3.12. The installer selects a supported version even
+   when a newer `python3` is also installed.
+3. Download this repository and double-click `Install Msty Local Ops.command`.
+4. The installer creates two ready-to-paste Toolbox JSON files and opens their folder.
+5. In Msty Studio, open **Toolbox → Add New Tool → STDIO / JSON** and paste the
    diagnostic JSON first.
-5. Test the tool in Msty's Tool Console before attaching it to a conversation.
+6. Test the tool in Msty's Tool Console before attaching it to a conversation.
 
 Msty's official Toolbox guide explains the same local STDIO/JSON flow:
 [Msty Studio Tools](https://docs.msty.ai/studio/toolbox/tools).

@@ -17,18 +17,22 @@ trap finish EXIT
 
 echo "Installing Msty Local Ops..."
 
-if ! command -v python3 >/dev/null 2>&1; then
+PYTHON_BIN=""
+for candidate in python3.12 python3.11 python3.10 python3; do
+    if command -v "$candidate" >/dev/null 2>&1 \
+        && "$candidate" -c 'import sys; raise SystemExit(0 if (3, 10) <= sys.version_info[:2] < (3, 13) else 1)'; then
+        PYTHON_BIN="$(command -v "$candidate")"
+        break
+    fi
+done
+
+if [[ -z "$PYTHON_BIN" ]]; then
     echo "Python 3.10, 3.11, or 3.12 is required. Install Python from python.org and try again." >&2
     exit 1
 fi
 
-if ! python3 -c 'import sys; raise SystemExit(0 if (3, 10) <= sys.version_info[:2] < (3, 13) else 1)'; then
-    echo "Python 3.10, 3.11, or 3.12 is required." >&2
-    exit 1
-fi
-
 mkdir -p "$INSTALL_ROOT" "$CONFIG_DIR"
-python3 -m venv "$VENV_DIR"
+"$PYTHON_BIN" -m venv "$VENV_DIR"
 "$VENV_DIR/bin/python" -m pip install \
     --disable-pip-version-check \
     --require-hashes \

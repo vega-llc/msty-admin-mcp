@@ -40,3 +40,10 @@ def test_toolbox_config_writer_uses_explicit_python(tmp_path):
         "env": {"PYTHONUNBUFFERED": "1"},
     }
     assert local["args"] == ["-m", "msty_ops.local_server"]
+
+
+def test_installer_selects_a_supported_python_before_the_default():
+    installer = (ROOT / "Install Msty Local Ops.command").read_text(encoding="utf-8")
+
+    assert "for candidate in python3.12 python3.11 python3.10 python3" in installer
+    assert '"$PYTHON_BIN" -m venv "$VENV_DIR"' in installer
