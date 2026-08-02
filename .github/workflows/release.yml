@@ -23,10 +23,10 @@ jobs:
       - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           version: "0.11.21"
-      - name: Validate final tag
-        run: python scripts/validate_release_tag.py "${GITHUB_REF_NAME}"
       - run: uv lock --check
       - run: uv sync --frozen --extra dev --python 3.12
+      - name: Validate final tag
+        run: uv run --frozen python scripts/validate_release_tag.py "${GITHUB_REF_NAME}"
       - run: uv run --frozen ruff check msty_ops scripts tests
       - run: uv run --frozen black --check msty_ops scripts tests
       - run: uv run --frozen mypy msty_ops scripts
