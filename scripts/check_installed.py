@@ -10,6 +10,7 @@ import sys
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from mcp.types import TextContent
 
 DIAGNOSTIC_TOOLS = {
     "get_msty_status",
@@ -33,13 +34,17 @@ async def inspect(mode: str) -> dict:
             models_result = await session.call_tool("get_model_manifest", {})
             capability_result = await session.call_tool("get_capability_manifest", {})
 
+    if not models_result.content or not isinstance(models_result.content[0], TextContent):
+        raise RuntimeError("model manifest did not return text")
+    if not capability_result.content or not isinstance(capability_result.content[0], TextContent):
+        raise RuntimeError("capability manifest did not return text")
     models = json.loads(models_result.content[0].text)
     capabilities = json.loads(capability_result.content[0].text)
     tools = {tool.name for tool in listed.tools}
     return {
         "ok": (
             initialized.serverInfo.name == expected_name
-            and initialized.serverInfo.version == "1.0.0"
+            and initialized.serverInfo.version == "1.1.0"
             and tools == expected_tools
             and set(capabilities.get("tools", [])) == expected_tools
             and capabilities.get("tool_count") == len(expected_tools)

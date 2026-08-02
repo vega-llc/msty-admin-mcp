@@ -51,12 +51,18 @@ mkdir -p "$INSTALL_ROOT" "$CONFIG_DIR"
 
 echo
 echo "Installation passed."
+echo "Start Msty Studio first. Msty will start the MCP when a configured tool needs it."
 echo "In Msty Studio, open Toolbox > Add New Tool > STDIO / JSON."
 echo "Paste the diagnostic configuration first:"
 echo "$CONFIG_DIR/msty-toolbox-diagnostic.json"
 echo
 echo "The local-inference configuration is optional and exposes prompt content to the MCP client:"
 echo "$CONFIG_DIR/msty-toolbox-local-inference.json"
+echo
+echo "After Msty and at least one local model are running, check health with:"
+echo "$VENV_DIR/bin/msty-local-ops-doctor"
+echo "When it is GREEN, record the upgrade baseline with:"
+echo "$VENV_DIR/bin/msty-local-ops-doctor --record-baseline"
 if [[ "${MSTY_LOCAL_OPS_NO_OPEN:-0}" != "1" ]]; then
     open "$CONFIG_DIR"
 fi

@@ -11,6 +11,7 @@ EXCLUDED_DIRS = {
     ".git",
     ".pytest_cache",
     ".ruff_cache",
+    ".mypy_cache",
     ".venv",
     "venv",
     "__pycache__",
