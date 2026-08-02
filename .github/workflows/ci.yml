@@ -63,7 +63,7 @@ jobs:
       - run: |
           "${RUNNER_TEMP}/wheel-check/bin/python" -m pip install dist/*.whl
       - run: |
-          "${RUNNER_TEMP}/wheel-check/bin/python" -c "import msty_ops; assert msty_ops.__version__ == '1.1.0'"
+          "${RUNNER_TEMP}/wheel-check/bin/python" -c "import importlib.metadata, msty_ops; assert msty_ops.__version__ == importlib.metadata.version('msty-local-ops')"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: python-distributions

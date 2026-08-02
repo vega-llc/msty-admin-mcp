@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+- Fixed the release workflow so tag validation runs inside the frozen dependency environment.
+
 ## 1.1.0
 
 - Added a red/yellow/green local doctor with explicit upgrade baselines.

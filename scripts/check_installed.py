@@ -44,7 +44,7 @@ async def inspect(mode: str) -> dict:
     return {
         "ok": (
             initialized.serverInfo.name == expected_name
-            and initialized.serverInfo.version == "1.1.0"
+            and initialized.serverInfo.version == "1.1.1"
             and tools == expected_tools
             and set(capabilities.get("tools", [])) == expected_tools
             and capabilities.get("tool_count") == len(expected_tools)
