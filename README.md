@@ -21,7 +21,9 @@ The default diagnostic process exposes exactly:
 The separate local-inference process adds only `local_generate`. That tool requires
 an exact model identifier advertised by a fixed Msty loopback service. It never
 auto-selects a model, follows redirects, uses a proxy, or falls back to an online
-provider.
+provider. Its bounded `thinking_mode` option accepts only `default` or `none`;
+`none` sends the standard local chat-template switch without exposing arbitrary
+provider parameters.
 
 ## Install
 

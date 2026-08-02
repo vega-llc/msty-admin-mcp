@@ -241,6 +241,119 @@ def test_local_generate_rejects_truncated_reasoning_as_an_answer(monkeypatch):
     assert "unfinished reasoning" not in json.dumps(result)
 
 
+def test_local_generate_rejects_budget_exhaustion_even_when_service_reports_stop(monkeypatch):
+    def fake_request(service, endpoint, **kwargs):
+        if endpoint == "/v1/models":
+            return {"success": True, "data": {"data": [{"id": "test-model"}]}}
+        return {
+            "success": True,
+            "latency_ms": 2.0,
+            "data": {
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {"content": "unfinished reasoning at the token ceiling"},
+                    }
+                ],
+                "usage": {"completion_tokens": 256},
+            },
+        }
+
+    monkeypatch.setattr(runtime, "request_json", fake_request)
+
+    result = runtime.local_generate_request(
+        model="test-model",
+        message="synthetic test",
+        service="mlx",
+        max_tokens=256,
+    )
+
+    assert result["success"] is False
+    assert result["error_kind"] == "output_truncated"
+    assert "unfinished reasoning" not in json.dumps(result)
+
+
+def test_local_generate_can_disable_thinking_without_arbitrary_parameters(monkeypatch):
+    chat_payload = None
+
+    def fake_request(service, endpoint, **kwargs):
+        nonlocal chat_payload
+        if endpoint == "/v1/models":
+            return {"success": True, "data": {"data": [{"id": "test-model"}]}}
+        chat_payload = kwargs["payload"]
+        return {
+            "success": True,
+            "latency_ms": 2.0,
+            "data": {
+                "choices": [{"finish_reason": "stop", "message": {"content": "ok"}}],
+                "usage": {"completion_tokens": 1},
+            },
+        }
+
+    monkeypatch.setattr(runtime, "request_json", fake_request)
+
+    result = runtime.local_generate_request(
+        model="test-model",
+        message="synthetic test",
+        service="mlx",
+        thinking_mode="none",
+    )
+
+    assert result["success"] is True
+    assert result["thinking_mode"] == "none"
+    assert chat_payload is not None
+    assert chat_payload["chat_template_kwargs"] == {"enable_thinking": False}
+
+
+def test_local_generate_default_omits_thinking_override(monkeypatch):
+    chat_payload = None
+
+    def fake_request(service, endpoint, **kwargs):
+        nonlocal chat_payload
+        if endpoint == "/v1/models":
+            return {"success": True, "data": {"data": [{"id": "test-model"}]}}
+        chat_payload = kwargs["payload"]
+        return {
+            "success": True,
+            "latency_ms": 2.0,
+            "data": {
+                "choices": [{"finish_reason": "stop", "message": {"content": "ok"}}],
+                "usage": {"completion_tokens": 1},
+            },
+        }
+
+    monkeypatch.setattr(runtime, "request_json", fake_request)
+
+    result = runtime.local_generate_request(
+        model="test-model",
+        message="synthetic test",
+        service="mlx",
+    )
+
+    assert result["success"] is True
+    assert result["thinking_mode"] == "default"
+    assert chat_payload is not None
+    assert "chat_template_kwargs" not in chat_payload
+
+
+def test_local_generate_rejects_unknown_thinking_mode(monkeypatch):
+    monkeypatch.setattr(
+        runtime,
+        "request_json",
+        lambda *args, **kwargs: pytest.fail("invalid input must not reach a service"),
+    )
+
+    result = runtime.local_generate_request(
+        model="test-model",
+        message="synthetic test",
+        service="mlx",
+        thinking_mode="unbounded",
+    )
+
+    assert result["success"] is False
+    assert result["error_kind"] == "invalid_parameter"
+
+
 def test_http_errors_do_not_read_or_return_response_body(monkeypatch):
     error = HTTPError(
         url="http://127.0.0.1:11973/v1/models",
